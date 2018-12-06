@@ -65,10 +65,10 @@ def precipitation():
     # Perform a query to retrieve the data and precipitation scores
     precipitation_info = pd.read_sql_query(sql_query, conn, 
                                         params=[previous_year.strftime('%Y%m%d')]).dropna()
-    precipitation_info['date'] = precipitation_info['date'].astype('datetime64[ns]')
+    precipitation_info['numeric_date'] = precipitation_info['date'].astype('datetime64[ns]')
 
     # Sort the dataframe by date
-    precipitation_info.index.sort_values('date')
+    precipitation_info.index.sort_values('numeric_date')
 
     return precipitation_info.to_json(orient='records')
 
@@ -85,9 +85,12 @@ def stations():
 @app.route("/api/v1.0/tobs")
 def tobs():
     conn = engine.connect()
+
+    sql_query = 'SELECT date, tobs FROM measurement '             'WHERE date > ?'
+    
     precipitation_info = pd.read_sql_query(sql_query, conn, 
                                        params=[previous_year.strftime('%Y%m%d')]).dropna()
-    precipitation_info['date'] = precipitation_info['date'].astype('datetime64[ns]')
+    precipitation_info['date_numeric'] = precipitation_info['date'].astype('datetime64[ns]')
     return precipitation_info.to_json(orient='records')
 
 @app.route("/api/v1.0/<start>")
