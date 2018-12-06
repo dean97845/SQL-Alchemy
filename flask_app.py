@@ -70,7 +70,7 @@ def precipitation():
     # Sort the dataframe by date
     precipitation_info.index.sort_values('date')
 
-    return jsonify(precipitation_info.to_dict('list'))
+    return precipitation_info.to_json(orient='records')
 
 
 @app.route("/api/v1.0/stations")
@@ -88,7 +88,7 @@ def tobs():
     precipitation_info = pd.read_sql_query(sql_query, conn, 
                                        params=[previous_year.strftime('%Y%m%d')]).dropna()
     precipitation_info['date'] = precipitation_info['date'].astype('datetime64[ns]')
-    return jsonify(precipitation_info.to_dict('list'))
+    return precipitation_info.to_json(orient='records')
 
 @app.route("/api/v1.0/<start>")
 @app.route("/api/v1.0/<start>/<end>")
